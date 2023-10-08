@@ -1,2 +1,2 @@
 # WGDashboard-Persian
-Persian template For WGDashboard
+Persian template for WGDashboard - Opiran Version
