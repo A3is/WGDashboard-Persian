@@ -1076,12 +1076,12 @@ $body.on("click", ".display_mode", function(){
                 Array($(".peer_list").children()).forEach(function(child){
                     $(child).removeClass().addClass("col-12");
                 });
-                window.configurations.showToast("Displaying as List");
+                window.configurations.showToast("نمایش بصورت لیست.");
             }else{
                Array($(".peer_list").children()).forEach(function(child){
                     $(child).removeClass().addClass("col-sm-6 col-lg-4");
                });
-               window.configurations.showToast("Displaying as Grids");
+               window.configurations.showToast("نمایش بصورت جدول.");
             }
            }
         }
