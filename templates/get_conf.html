@@ -162,7 +162,7 @@
                             <h6 style="text-transform: uppercase;">{{i['endpoint']}}</h6>
                         </div>
                         <div class="w-100"></div>
-                        <div class="col-sm"><hr><div class="button-group" style="display:flex"><button type="button" class="btn btn-outline-primary btn-setting-peer btn-control" id="{{i['id']}}" data-toggle="modal"><i class="bi bi-gear-fill"></i></button><button type="button" class="btn btn-outline-danger btn-delete-peer btn-control" id="{{i['id']}}" data-toggle="modal"><i class="bi bi-x-circle-fill"></i></button>
+                        <div class="col-sm"><hr><div class="button-group" style="display:flex; "><button type="button" class="btn btn-outline-primary btn-setting-peer btn-control" id="{{i['id']}}" data-toggle="modal"><i class="bi bi-gear-fill"></i></button><button type="button" class="btn btn-outline-danger btn-delete-peer btn-control" id="{{i['id']}}" data-toggle="modal"><i class="bi bi-x-circle-fill"></i></button>
                                 {% if i['private_key'] %}
                                     <div class="share_peer_btn_group" style="margin-left: auto !important; display: inline">
                                         <button type="button" class="btn btn-outline-success btn-qrcode-peer btn-control" img_src="/qrcode/{{ conf_data['name'] }}?id={{ i['id']|urlencode }}">

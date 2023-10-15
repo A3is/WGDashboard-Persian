@@ -1,5 +1,6 @@
-<html>
-    {% with title="Sign In"%}
+<!-- Persianized and developed by A3is in Opiran - [https://github.com/opiran-club] -->
+<html lang="fa" dir="rtl">
+    {% with title="ورود به پنل"%}
         {% include "header.html"%}
     {% endwith %}
     <style>
@@ -14,22 +15,22 @@
         <div class="container-fluid login-container-fluid">
             <main role="main" class="container login-container">
                 <div class="login-box" style="margin: auto !important;">
-                    <h1 class="text-center">Sign in</h1>
-                    <h5 class="text-center">to WGDashboard</h5>
+                    <h1 class="text-center">ورود به پنل</h1>
+                    <h5 class="text-center">WGDashboard</h5>
                     <form style="margin-left: auto !important; margin-right: auto !important; max-width: 500px;" action="/auth" method="post">
                         {% if message != "" %}
-                            <div class="alert alert-warning" role="alert">You need to sign in first</div>
+                            <div class="alert alert-warning" role="alert">لطفا ابتدا وارد شوید.</div>
                         {% endif %}
                         <div class="alert alert-danger d-none" role="alert" style="margin-top: 1rem; margin-bottom: 0rem;"></div>
                         <div class="form-group">
-                            <label for="username" class="text-left" style="font-size: 1rem"><i class="bi bi-person-circle"></i></label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Your username" required>
+                            <label for="username1" class="text-left" style="font-size: 1rem;"><i class="bi bi-person-circle" style="margin-left: 5px;"></i>نام کاربری :</label>
+                            <input type="text" class="form-control mb-3" id="username" name="username" placeholder="username" dir="ltr"  value="admin" required>
                         </div>
                         <div class="form-group">
-                            <label for="password" class="text-left" style="font-size: 1rem"><i class="bi bi-key-fill"></i></label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Your password" required>
+                            <label for="password1" class="text-left" style="font-size: 1rem"><i class="bi bi-key-fill" style="margin-left: 5px;"></i>رمز عبور :</label>
+                            <input type="password" class="form-control mb-3" id="password" name="password" placeholder="password" dir="ltr" value="admin" required>
                         </div>
-                      <button type="submit" class="btn btn-dark" style="width: 100%">Sign In</button>
+                      <button type="submit" class="btn btn-dark" style="width: 100%">ورود</button>
                     </form>
                 </div>
             </main>
@@ -47,14 +48,14 @@
         let check = true
         for (let i = 0; i < req.length; i++){
             if ($(req[i]).val().length === 0){
-                loginButton.html("Sign In");
+                loginButton.html("ورود");
                 check = false;
                 $(req[i]).addClass("is-invalid");
                 break;
             }
         }
         if (check){
-            $(this).html("Signing In...").attr("disabled", "disabled");
+            $(this).html("در حال ورود...").attr("disabled", "disabled");
             $.ajax({
                 url: "/auth",
                 method: "POST",
@@ -77,7 +78,7 @@
                     }
                 }else{
                     $(".alert").html(res.msg).removeClass("d-none").fadeIn();
-                    loginButton.html("Sign In").removeAttr("disabled");
+                    loginButton.html("ورود").removeAttr("disabled");
                     $("input[required]").addClass("is-invalid");
                 }
             });

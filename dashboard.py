@@ -1,14 +1,15 @@
 """
 < WGDashboard > - Copyright(C) 2021 Donald Zou [https://github.com/donaldzou]
+Persianized and developed by A3is in Opiran - [https://github.com/opiran-club]
 Under Apache-2.0 License
 """
-
 import sqlite3
 import configparser
 import hashlib
 import ipaddress
 import json
 # Python Built-in Library
+import psutil
 import os
 import secrets
 import subprocess
@@ -57,6 +58,94 @@ QRcode(app)
 
 # TODO: use class and object oriented programming
 
+
+######### format_bytes-func #########
+def format_bytes(bytes):
+    if bytes < 1024:
+        return f"{bytes} B"
+    elif bytes < 1024 ** 2:
+        return f"{bytes / 1024:.2f}KB"
+    elif bytes < 1024 ** 3:
+        return f"{bytes / (1024 ** 2):.2f}MB"
+    else:
+        return f"{bytes / (1024 ** 3):.2f}GB"
+
+
+######### total-ram-func #########
+def get_total_ram():
+    with open('/proc/meminfo') as meminfo_file:
+        for line in meminfo_file:
+            if line.startswith('MemTotal:'):
+                total_ram_kb = int(line.split()[1])
+                return total_ram_kb
+                
+######### used_ram-func #########
+def get_used_ram():
+    with open('/proc/meminfo') as meminfo_file:
+        meminfo = meminfo_file.read()
+    lines = meminfo.split('\n')
+
+    for line in lines:
+        if line.startswith('MemTotal:'):
+            total_ram_kb = int(line.split()[1])
+        elif line.startswith('MemFree:'):
+            free_ram_kb = int(line.split()[1])
+        elif line.startswith('Buffers:'):
+            buffers_kb = int(line.split()[1])
+        elif line.startswith('Cached:'):
+            cached_kb = int(line.split()[1])
+
+    used_ram_kb = total_ram_kb - free_ram_kb - buffers_kb - cached_kb
+    return used_ram_kb
+
+######### cpu_capacity-func ######### 
+def get_cpu_capacity():
+    cpuinfo_path = '/proc/cpuinfo'
+    if not os.path.exists(cpuinfo_path):
+        return None
+
+    with open(cpuinfo_path, 'r') as cpuinfo_file:
+        cpuinfo = cpuinfo_file.read()
+
+    processor_lines = [line for line in cpuinfo.split('\n') if line.startswith('processor')]
+    return len(processor_lines)
+    
+        
+######### cpu_usage-func #########    
+def get_cpu_usage():
+    with open('/proc/stat') as stat_file:
+        lines = stat_file.readlines()
+
+    for line in lines:
+        if line.startswith("cpu "):
+            fields = line.strip().split()
+            user, nice, system, idle, iowait, irq, softirq = map(int, fields[1:8])
+            total = user + nice + system + idle + iowait + irq + softirq
+            usage = 100.0 * (total - idle) / total
+            return usage
+
+
+######### get_hard_info-func #########   
+def get_hard_info():
+    # Get the disk partitions
+    partitions = psutil.disk_partitions()
+
+    for partition in partitions:
+        # Get the disk usage statistics
+        usage = psutil.disk_usage(partition.mountpoint)
+
+        #print(f"Device: {partition.device}")
+        #print(f"Mountpoint: {partition.mountpoint}")
+        #print(f"Total Size: {usage.total / (1024 ** 3):.2f} GB")
+        #print(f"Free Space: {usage.free / (1024 ** 3):.2f} GB")
+        #print(f"Used Space: {usage.used / (1024 ** 3):.2f} GB")
+        #print(f"Percentage Used: {usage.percent}%\n")
+    
+        return f"{format_bytes(usage.used)} / {format_bytes(usage.total)}"
+    
+    
+
+                
 def connect_db():
     """
     Connect to the database
@@ -100,7 +189,7 @@ def get_conf_peer_key(config_name):
         peers_keys = peers_keys.decode("UTF-8").split()
         return peers_keys
     except subprocess.CalledProcessError:
-        return config_name + " is not running."
+        return config_name + " در حال اجرا نیست. آن را فعال کنید."
 
 
 def get_conf_running_peer_number(config_name):
@@ -530,7 +619,7 @@ def gen_public_key(private_key):
         return {"status": 'success', "msg": "", "data": public_key}
     except subprocess.CalledProcessError:
         os.remove('private_key.txt')
-        return {"status": 'failed', "msg": "Key is not the correct length or format", "data": ""}
+        return {"status": 'failed', "msg": "تعداد کلید یا قالب آن صحیح نیست.", "data": ""}
 
 
 def f_check_key_match(private_key, public_key, config_name):
@@ -553,7 +642,7 @@ def f_check_key_match(private_key, public_key, config_name):
         sql = "SELECT * FROM " + config_name + " WHERE id = ?"
         match = g.cur.execute(sql, (result['data'],)).fetchall()
         if len(match) != 1 or result['data'] != public_key:
-            return {'status': 'failed', 'msg': 'Please check your private key, it does not match with the public key.'}
+            return {'status': 'failed', 'msg': 'لطفا کلید خصوصی خود را بررسی کنید، با کلید عمومی مطابقت ندارد.'}
         else:
             return {'status': 'success'}
 
@@ -568,13 +657,13 @@ def check_repeat_allowed_ip(public_key, ip, config_name):
     """
     peer = g.cur.execute("SELECT COUNT(*) FROM " + config_name + " WHERE id = ?", (public_key,)).fetchone()
     if peer[0] != 1:
-        return {'status': 'failed', 'msg': 'Peer does not exist'}
+        return {'status': 'failed', 'msg': 'کاربر وجود ندارد.'}
     else:
         existed_ip = g.cur.execute("SELECT COUNT(*) FROM " +
                                    config_name + " WHERE id != ? AND allowed_ip LIKE '" + ip + "/%'", (public_key,)) \
             .fetchone()
         if existed_ip[0] != 0:
-            return {'status': 'failed', 'msg': "Allowed IP already taken by another peer."}
+            return {'status': 'failed', 'msg': "Allowed IP قبلاً توسط کاربر دیگری استفاده شده است."}
         else:
             return {'status': 'success'}
 
@@ -641,15 +730,52 @@ def auth_req():
     req = conf.get("Server", "auth_req")
     session['update'] = UPDATE
     session['dashboard_version'] = DASHBOARD_VERSION
+    session['admin_ip'] =     request.remote_addr
+    
+    
+    total_ram_kb = get_total_ram()
+    if total_ram_kb >= 1024**2:
+        total_ram = total_ram_kb / (1024**2)  # Convert to gigabytes
+        t_unit = "GB"
+    else:
+        total_ram = total_ram_kb / 1024  # Convert to megabytes
+        t_unit = "MB"
+    session['total_ram'] =  f"{total_ram:.2f}{t_unit}"
+ 
+ 
+    used_ram_kb = get_used_ram()
+    if used_ram_kb >= 1024**2:
+        used_ram = used_ram_kb / (1024**2)  # Convert to gigabytes
+        u_unit = "GB"
+    else:
+        used_ram = used_ram_kb / 1024  # Convert to megabytes
+        u_unit = "MB"
+    session['used_ram'] = f"{used_ram:.2f}{u_unit}"
+    
+    
+    cpu_capacity = get_cpu_capacity()
+    if cpu_capacity is not None:
+        session['cpu_capacity'] = f"{cpu_capacity}"
+    else:
+        session['cpu_capacity'] = 0
+    
+
+    cpu_usage = get_cpu_usage()
+    session['cpu_usage'] = f"{cpu_usage:.2f}%"
+
+
+    session['hard_info'] = get_hard_info()
+    
+    
     if req == "true":
         if '/static/' not in request.path and \
                 request.endpoint != "signin" and \
                 request.endpoint != "signout" and \
                 request.endpoint != "auth" and \
                 "username" not in session:
-            print("User not signed in - Attempted access: " + str(request.endpoint))
+            print("کاربر وارد نشده است - تلاش برای دسترسی:" + str(request.endpoint))
             if request.endpoint != "index":
-                session['message'] = "You need to sign in first!"
+                session['message'] = "لطفا ابتدا وارد شوید."
             else:
                 session['message'] = ""
             conf.clear()
@@ -712,7 +838,7 @@ def auth():
         config.clear()
         return jsonify({"status": True, "msg": ""})
     config.clear()
-    return jsonify({"status": False, "msg": "Username or Password is incorrect."})
+    return jsonify({"status": False, "msg": "نام کاربری یا کلمه عبور اشتباه است."})
 
 
 """
@@ -768,7 +894,7 @@ def update_acct():
     """
 
     if len(request.form['username']) == 0:
-        session['message'] = "Username cannot be empty."
+        session['message'] = "نام کاربری نمی تواند خالی باشد."
         session['message_status'] = "danger"
         return redirect(url_for("settings"))
     config = get_dashboard_conf()
@@ -776,12 +902,12 @@ def update_acct():
     try:
         set_dashboard_conf(config)
         config.clear()
-        session['message'] = "Username update successfully!"
+        session['message'] = "نام کاربری با موفقیت به روز شد!"
         session['message_status'] = "success"
         session['username'] = request.form['username']
         return redirect(url_for("settings"))
     except Exception:
-        session['message'] = "Username update failed."
+        session['message'] = "به روز رسانی نام کاربری ناموفق بود."
         session['message_status'] = "danger"
         config.clear()
         return redirect(url_for("settings"))
@@ -799,14 +925,14 @@ def update_peer_default_config():
     if len(request.form['peer_endpoint_allowed_ip']) == 0 or \
             len(request.form['peer_global_DNS']) == 0 or \
             len(request.form['peer_remote_endpoint']) == 0:
-        session['message'] = "Please fill in all required boxes."
+        session['message'] = "لطفا فیلدهای الزامی را تکمیل نمایید"
         session['message_status'] = "danger"
         config.clear()
         return redirect(url_for("settings"))
     # Check DNS Format
     dns_addresses = request.form['peer_global_DNS']
     if not check_DNS(dns_addresses):
-        session['message'] = "Peer DNS Format Incorrect."
+        session['message'] = "فرمت DNS تنظیمات نادرست است."
         session['message_status'] = "danger"
         config.clear()
         return redirect(url_for("settings"))
@@ -815,27 +941,27 @@ def update_peer_default_config():
     # Check Endpoint Allowed IPs
     ip = request.form['peer_endpoint_allowed_ip']
     if not check_Allowed_IPs(ip):
-        session['message'] = "Peer Endpoint Allowed IPs Format Incorrect. " \
-                             "Example: 192.168.1.1/32 or 192.168.1.1/32,192.168.1.2/32"
+        session['message'] = "فرمت Endpoint Allowed IPs نادرست است." \
+                             "مثال: 192.168.1.1/32 or 192.168.1.1/32,192.168.1.2/32"
         session['message_status'] = "danger"
         config.clear()
         return redirect(url_for("settings"))
     # Check MTU Format
     if not len(request.form['peer_mtu']) > 0 or not request.form['peer_mtu'].isdigit():
-        session['message'] = "MTU format is incorrect."
+        session['message'] = "فرمت MTU نادرست است."
         session['message_status'] = "danger"
         config.clear()
         return redirect(url_for("settings"))
     # Check keepalive Format
     if not len(request.form['peer_keep_alive']) > 0 or not request.form['peer_keep_alive'].isdigit():
-        session['message'] = "Persistent keepalive format is incorrect."
+        session['message'] = "فرمت Persistent keepalive نادرست است."
         session['message_status'] = "danger"
         config.clear()
         return redirect(url_for("settings"))
     # Check peer remote endpoint
     if not check_remote_endpoint(request.form['peer_remote_endpoint']):
-        session['message'] = "Peer Remote Endpoint format is incorrect. It can only be a valid " \
-                             "IP address or valid domain (without http:// or https://). "
+        session['message'] = "فرمت Peer Remote Endpoint نادرست است. " \
+                             "آدرس IP یا دامنه معتبر (بدون http:// یا https://)."
         session['message_status'] = "danger"
         config.clear()
         return redirect(url_for("settings"))
@@ -846,12 +972,12 @@ def update_peer_default_config():
     config.set("Peers", "peer_global_DNS", dns_addresses)
     try:
         set_dashboard_conf(config)
-        session['message'] = "Peer Default Settings update successfully!"
+        session['message'] = "تنظیمات پیش فرض با موفقیت به‌روزرسانی شد!"
         session['message_status'] = "success"
         config.clear()
         return redirect(url_for("settings"))
     except Exception:
-        session['message'] = "Peer Default Settings update failed."
+        session['message'] = "بروزرسانی تنظیمات پیش فرض ناموفق بود."
         session['message_status'] = "danger"
         config.clear()
         return redirect(url_for("settings"))
@@ -872,22 +998,22 @@ def update_pwd():
             config.set("Account", "password", hashlib.sha256(request.form['repnewpass'].encode()).hexdigest())
             try:
                 set_dashboard_conf(config)
-                session['message'] = "Password update successfully!"
+                session['message'] = "رمز عبور با موفقیت به روز شد!"
                 session['message_status'] = "success"
                 config.clear()
                 return redirect(url_for("settings"))
             except Exception:
-                session['message'] = "Password update failed"
+                session['message'] = "به روز رسانی رمز عبور ناموفق بود"
                 session['message_status'] = "danger"
                 config.clear()
                 return redirect(url_for("settings"))
         else:
-            session['message'] = "Your New Password does not match."
+            session['message'] = "رمز عبور جدید شما مطابقت ندارد."
             session['message_status'] = "danger"
             config.clear()
             return redirect(url_for("settings"))
     else:
-        session['message'] = "Your Password does not match."
+        session['message'] = "رمز عبور فعلی شما مطابقت ندارد."
         session['message_status'] = "danger"
         config.clear()
         return redirect(url_for("settings"))
@@ -921,7 +1047,7 @@ def update_wg_conf_path():
     config.set("Server", "wg_conf_path", request.form['wg_conf_path'])
     set_dashboard_conf(config)
     config.clear()
-    session['message'] = "WireGuard Configuration Path Update Successfully!"
+    session['message'] = "به روز رسانی مسیر پیکربندی وایرگارد با موفقیت انجام شد!"
     session['message_status'] = "success"
     subprocess.Popen('bash wgd.sh restart', shell=True)
 
@@ -1160,24 +1286,24 @@ def add_peer(config_name):
     preshared_key = data['preshared_key']
     keys = get_conf_peer_key(config_name)
     if len(public_key) == 0 or len(dns_addresses) == 0 or len(allowed_ips) == 0 or len(endpoint_allowed_ip) == 0:
-        return "Please fill in all required box."
+        return "لطفا فیلدهای الزامی را تکمیل نمایید."
     if not isinstance(keys, list):
-        return config_name + " is not running."
+        return config_name + " در حال اجرا نیست. آن را فعال کنید."
     if public_key in keys:
-        return "Public key already exist."
+        return "کلید عمومی از قبل وجود دارد."
     check_dup_ip = g.cur.execute(
         "SELECT COUNT(*) FROM " + config_name + " WHERE allowed_ip LIKE '" + allowed_ips + "/%'", ) \
         .fetchone()
     if check_dup_ip[0] != 0:
-        return "Allowed IP already taken by another peer."
+        return "Allowed IPs قبلاً توسط کاربر دیگری استفاده شده است."
     if not check_DNS(dns_addresses):
-        return "DNS formate is incorrect. Example: 1.1.1.1"
+        return "فرمت DNS نادرست است. مثال: 1.1.1.1"
     if not check_Allowed_IPs(endpoint_allowed_ip):
-        return "Endpoint Allowed IPs format is incorrect."
+        return "فرمت Endpoint Allowed IPs نادرست است."
     if len(data['MTU']) == 0 or not data['MTU'].isdigit():
-        return "MTU format is not correct."
+        return "فرمت MTU درست نیست."
     if len(data['keep_alive']) == 0 or not data['keep_alive'].isdigit():
-        return "Persistent Keepalive format is not correct."
+        return "فرمت Persistent Keepalive درست نیست."
     try:
         if enable_preshared_key:
             now = str(datetime.now().strftime("%m%d%Y%H%M%S"))
@@ -1217,13 +1343,13 @@ def remove_peer(config_name):
     delete_keys = data['peer_ids']
     keys = get_conf_peer_key(config_name)
     if not isinstance(keys, list):
-        return config_name + " is not running."
+        return config_name + " در حال اجرا نیست. آن را فعال کنید."
     else:
         sql_command = []
         wg_command = ["wg", "set", config_name]
         for delete_key in delete_keys:
             if delete_key not in keys:
-                return "This key does not exist"
+                return "این کلید وجود ندارد"
             sql_command.append("DELETE FROM " + config_name + " WHERE id = '" + delete_key + "';")
             wg_command.append("peer")
             wg_command.append(delete_key)
@@ -1261,13 +1387,13 @@ def save_peer_setting(config_name):
     if check_peer_exist[0] == 1:
         check_ip = check_repeat_allowed_ip(id, allowed_ip, config_name)
         if not check_IP_with_range(endpoint_allowed_ip):
-            return jsonify({"status": "failed", "msg": "Endpoint Allowed IPs format is incorrect."})
+            return jsonify({"status": "failed", "msg": "فرمت Endpoint Allowed IPs نادرست است."})
         if not check_DNS(dns_addresses):
-            return jsonify({"status": "failed", "msg": "DNS format is incorrect."})
+            return jsonify({"status": "failed", "msg": "فرمت DNS نادرست است. مثلا: 1.1.1.1"})
         if len(data['MTU']) == 0 or not data['MTU'].isdigit():
-            return jsonify({"status": "failed", "msg": "MTU format is not correct."})
+            return jsonify({"status": "failed", "msg": "فرمت MTU نادرست است."})
         if len(data['keep_alive']) == 0 or not data['keep_alive'].isdigit():
-            return jsonify({"status": "failed", "msg": "Persistent Keepalive format is not correct."})
+            return jsonify({"status": "failed", "msg": "فرمت Persistent Keepalive نادرست است."})
         if private_key != "":
             check_key = f_check_key_match(private_key, id, config_name)
             if check_key['status'] == "failed":
@@ -1297,7 +1423,7 @@ def save_peer_setting(config_name):
         except subprocess.CalledProcessError as exc:
             return jsonify({"status": "failed", "msg": str(exc.output.decode("UTF-8").strip())})
     else:
-        return jsonify({"status": "failed", "msg": "This peer does not exist."})
+        return jsonify({"status": "failed", "msg": "این کاربر وجود ندارد."})
 
 
 # Get peer settings

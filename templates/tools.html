@@ -11,9 +11,9 @@
                 <div class="row">
                     <div class="col-sm">
                         <div class="mb-3">
-                            <small>Configuration</small>
+                            <small>کانفیگ</small>
                             <select class="form-control mt-2 conf_dropdown">
-                                <option value="none" selected="selected" disabled>Select Configuration</option>
+                                <option value="none" selected="selected" disabled>انتخاب کانفیگ</option>
                                 {% for i in conf%}
                                     <option value="{{ i['conf'] }}">{{ i['conf'] }}</option>
                                 {%endfor%}
@@ -24,13 +24,13 @@
                         <div class="mb-3">
                             <small>IP</small>
                             <select class="form-control mt-2 ip_dropdown">
-                                <option value="none" selected="selected" disabled>Choose an IP</option>
+                                <option value="none" selected="selected" disabled>انتخاب IP</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-sm">
                         <div class="mb-3">
-                            <small>Ping Count</small>
+                            <small>تعداد Ping </small>
                             <input type="number" class="form-control mt-2 ping_count" min=1 value=4>
                         </div>
                     </div>
@@ -62,9 +62,9 @@
                 <div class="row">
                     <div class="col-sm">
                         <div class="mb-3">
-                            <small>Configuration</small>
+                            <small>کانفیگ</small>
                             <select class="form-control mt-2 conf_dropdown">
-                                <option value="none" selected="selected" disabled>Select Configuration</option>
+                                <option value="none" selected="selected" disabled>انتخاب کانفیگ</option>
                                 {% for i in conf%}
                                     <option value="{{ i['conf'] }}">{{ i['conf'] }}</option>
                                 {%endfor%}
@@ -75,12 +75,13 @@
                         <div class="mb-3">
                             <small>IP</small>
                             <select class="form-control mt-2 ip_dropdown">
-                                <option value="none" selected="selected" disabled>Choose an IP</option>
+                                <option value="none" selected="selected" disabled>انتخاب IP</option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary send_traceroute" disabled>Traceroute</button>
+                <button class="btn btn-primary send_traceroute" style="float: left;" disabled>Traceroute</button>
+                <br style="clear: both;">
                 <hr>
                 <div class="traceroute_result">
                     <table class="table table-sm">

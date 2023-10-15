@@ -1,7 +1,27 @@
-body {
-    font-size: .875rem;
-    /*font-family: 'Poppins', sans-serif;*/
+# Persianized and developed by A3is in Opiran - [https://github.com/opiran-club] 
+
+@font-face {
+  font-family: 'BZar';
+  src: url('../fonts/BZar.eot?#') format('eot'),  /* IE6–8 */
+       url('../fonts/BZar.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+       url('../fonts/BZar.ttf') format('truetype');  /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
 }
+@font-face {
+  font-family: 'BYekan';
+  src: url('../fonts/BYekan.eot?#') format('eot'),  /* IE6–8 */
+       url('../fonts/BYekan.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+       url('../fonts/BYekan.ttf') format('truetype');  /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+
+body {
+    font-size: 1rem;
+    font-family: "BYekan", sans-serif;
+    text-decoration: rtl;
+    text-align: right;
+    
+}
+
+a { text-decoration:none;}
 
 .feather {
     width: 16px;
@@ -17,10 +37,10 @@ body {
     position: fixed;
     top: 0;
     bottom: 0;
-    left: 0;
+    right: 0;
     z-index: 100; /* Behind the navbar */
     padding: 48px 0 0; /* Height of navbar */
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    box-shadow: inset 1px 0 0 rgba(0, 0, 0, .1);
 }
 
 /*@media (max-width: 767.98px) {*/
@@ -62,7 +82,7 @@ body {
 }
 
 .sidebar .nav-link.active {
-    color: #007bff;
+    color: #0F52BA;
 }
 
 .sidebar .nav-link:hover .feather,
@@ -80,6 +100,7 @@ body {
  */
 
 .navbar-brand {
+    text-align: left;
     padding-top: .75rem;
     padding-bottom: .75rem;
     font-size: 1rem;
@@ -89,9 +110,15 @@ body {
 
 .navbar .navbar-toggler {
     top: .25rem;
-    right: 1rem;
+    left: 1rem;
 }
 
+.navbar-logo {
+  float:left;
+   width:1.2rem; 
+   margin-right:5px;
+
+}
 .form-control{
     transition: all 0.2s ease-in-out;
 }
@@ -117,6 +144,10 @@ body {
     box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
 
+.sb-update-url {
+	color: #28a745!important;
+}
+
 .dot{
     width: 10px;
     height: 10px;
@@ -137,6 +168,19 @@ body {
 .dot-stopped{
     background-color: #6c757d!important;
 }
+
+.dot-blue{
+    width: 7px;
+    height: 7px;
+    background-color: #0096FF!important;
+    box-shadow: 0 0 0 0.2rem #28a74545;
+}
+
+.dot-red{
+    background-color: #C70039!important;
+    box-shadow: 0 0 0 0.2rem #28a74545;
+}
+
 
 .card-running{
     border-color: #28a745;
@@ -247,6 +291,7 @@ body {
 
 main{
     margin-bottom: 3rem;
+    float:left;
 }
 
 .peer_list{
@@ -267,8 +312,9 @@ main{
     z-index: 99;
     position: fixed;
     bottom: 3rem;
-    right: 2rem;
-    display: flex;
+    left: 2rem;
+    display: block;
+    text-align:left;
 }
 
 .btn-manage-group .setting_btn_menu{
@@ -276,7 +322,7 @@ main{
     top: -124px;
     background-color: white;
     padding: 1rem 0;
-    right: 0;
+    left: 0;
     box-shadow: 0 10px 20px rgb(0 0 0 / 19%), 0 6px 6px rgb(0 0 0 / 23%);
     border-radius: 10px;
     min-width: 200px;
@@ -284,6 +330,7 @@ main{
     transform: translateY(-30px);
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.58, 0.03, 0.05, 1.28);
+    text-align: right;
 }
 
 .btn-manage-group .setting_btn_menu.show{
@@ -295,13 +342,17 @@ main{
     opacity: 1;
 }
 
-.setting_btn_menu a{
+.setting_btn_menu a{ 
+    direction: ltr;
     display: flex;
     padding: 0.5rem 1rem;
     transition: all 0.1s ease-in-out;
     font-size: 1rem;
-    align-items: center;
+    text-align: right;
     cursor: pointer;
+}
+.setting_btn_menu i{ 
+   
 }
 
 .setting_btn_menu a:hover{
@@ -317,9 +368,9 @@ main{
     height: 54px;
     z-index: 99;
     border-radius: 100px !important;
-    padding: 0 14px;
+    padding: 10px 14px 0 14px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-    margin-right: 1rem;
+    margin-right: 0.4rem;
     font-size: 1.5rem;
 }
 
@@ -327,7 +378,7 @@ main{
     height: 54px;
     z-index: 99;
     border-radius: 100px !important;
-    padding: 0 14px;
+    padding: 10px 14px 0 14px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     font-size: 1.5rem;
 }
@@ -432,6 +483,7 @@ label[for="username"], label[for="password"]{
     border-radius: 10px;
 }
 
+
 .tooltip-inner{
     font-size: 0.8rem;
 }
@@ -504,7 +556,7 @@ label[for="username"], label[for="password"]{
 }
 
 #selected_peer_list{
-    max-height: 80px;
+    max-height: 40px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
