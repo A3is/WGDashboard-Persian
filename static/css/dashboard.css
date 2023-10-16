@@ -280,6 +280,11 @@ a { text-decoration:none;}
 /*  text-align: right;*/
 /*}*/
 
+.peer_data_group {
+    text-align: left;
+    margin-top: 5px;
+}
+
 @media (max-width: 768px) {
     .peer_data_group{
         text-align: left;
