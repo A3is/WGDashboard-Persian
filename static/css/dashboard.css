@@ -11,6 +11,7 @@
   src: url('../fonts/BYekan.eot?#') format('eot'),  /* IE6–8 */
        url('../fonts/BYekan.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
        url('../fonts/BYekan.ttf') format('truetype');  /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+       unicode-range:U+0600-06FF;
 }
 
 body {
@@ -311,10 +312,11 @@ main{
 .btn-manage-group{
     z-index: 99;
     position: fixed;
-    bottom: 3rem;
-    left: 2rem;
+    bottom: 2.5rem;
+    left: 1.7rem;
     display: block;
     text-align:left;
+    width: auto;
 }
 
 .btn-manage-group .setting_btn_menu{
@@ -368,7 +370,7 @@ main{
     height: 54px;
     z-index: 99;
     border-radius: 100px !important;
-    padding: 10px 14px 0 14px;
+    padding: auto;
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     margin-right: 0.4rem;
     font-size: 1.5rem;
@@ -378,7 +380,7 @@ main{
     height: 54px;
     z-index: 99;
     border-radius: 100px !important;
-    padding: 10px 14px 0 14px;
+    padding: auto;
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     font-size: 1.5rem;
 }
@@ -434,11 +436,30 @@ main{
 
 .progress-bar{
     transition: 0.3s ease-in-out;
-}
+} 
 
 .key{
+    font-size: 0.8rem;
     transition: 0.2s ease-in-out;
     cursor: pointer;
+}
+
+@media (max-width: 500px) {
+
+    .public_key_mobile {
+        font-size: 0.7rem; 
+    }
+    .btn-manage-group{
+        bottom: 2rem;
+        left: 1rem;
+    }
+    .display_mode_mobile{
+        display: none;
+    }
+    #search_peer_textbox {
+        text-align: center;
+    }
+    
 }
 
 .key:hover{

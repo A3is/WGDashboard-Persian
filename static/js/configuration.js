@@ -101,7 +101,7 @@
                         '<h5 style="margin: 0 0 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">'+ (peer.name === "" ? "Untitled" : peer.name) +'</h5>' +
                     '</div>';
                 let peer_transfer = '<div class="col-12 peer_data_group" style="text-align: left; display: flex; margin-bottom: 0.5rem; padding-right:10px"><p class="text-primary" style="text-transform: uppercase; margin-bottom: 0; margin-left:15px;"><small><i class="bi bi-arrow-down-right"></i> '+ roundN(peer.total_receive + total_r, 4) +'GB</small></p> <p class="text-success" style="text-transform: uppercase; margin-bottom: 0; "><small><i class="bi bi-arrow-up-right"></i> '+ roundN(peer.total_sent + total_s, 4) +'GB</small></p> </div>';
-                let peer_key = '<div class="col-12"><small class="text-muted" style="display: flex"><strong>کلید خصوصی :</strong><strong style="margin-left: auto!important; opacity: 0; transition: 0.2s ease-in-out" class="text-primary">جهت کپی کلیک کنید</strong></small> <h6 style="float:left; text-align:left" class="col-12"><samp class="ml-auto key" style="font-size:0.9rem; ">'+peer.id+'</samp></h6></div>';
+                let peer_key = '<div class="col-12"><small class="text-muted" style="display: flex"><strong>کلید خصوصی :</strong><strong style="margin-left: auto!important; opacity: 0; transition: 0.2s ease-in-out" class="text-primary">جهت کپی کلیک کنید</strong></small> <h6 style="float:left; text-align:left" class="col-12"><samp class="ml-auto key public_key_mobile" style=" ">'+peer.id+'</samp></h6></div>';
                 let peer_allowed_ip = '<div class="col-12"><small class="text-muted"><strong>ALLOWED IP :</strong></small><h6 style="float:left; text-align:left; text-transform: uppercase;" class="col-12">'+peer.allowed_ip+'</h6></div>';
                 let peer_latest_handshake = '<div class="col-12"> <small class="text-muted"><strong>LATEST HANDSHAKE :</strong></small> <h6 style="float:left; text-align:left; text-transform: uppercase;" class="col-12">'+peer.latest_handshake+'</h6> </div>';
                 let peer_endpoint = '<div class="col-12"><small class="text-muted"><strong>END POINT :</strong></small><h6 style="float:left; text-align:left; text-transform: uppercase;" class="col-12">'+peer.endpoint+'</h6></div>';
@@ -400,7 +400,7 @@
             configuration_timeout = interval;
             removeConfigurationInterval();
             setConfigurationInterval();
-            showToast("Refresh Interval set to "+Math.round(interval/1000)+" seconds");
+            showToast("بروزرسانی کاربران هر "+Math.round(interval/1000)+" ثانیه");
         }else{
             $(".interval-btn-group button").removeClass("active");
             $('.interval-btn-group button[data-refresh-interval="'+configuration_timeout+'"]').addClass("active");
