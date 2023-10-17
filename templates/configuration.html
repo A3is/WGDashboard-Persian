@@ -212,6 +212,19 @@
                                     <input type="text" class="form-control" id="new_add_name"  dir="ltr">
                                 </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="peer_date_input"> زمان اشتراک : <code>(Required)</code></label>
+                                    <input type="text" class="form-control peer_date_input" name="peer_date_input" id="peer_date_input" value="" autocomplete="off" placeholder="زمان اشتراک" required readonly style="background:#fff;"  dir="rtl">
+                                    <div style="width: 0;height: 0; overflow: hidden;"><input type="text" class="form-control peer_date" name="peer_date" id="peer_date" dir="ltr" value=""></div>
+                                </div> 
+                           </div>
+                           <div class="col-sm-6">
+                                <div class="form-group">
+                                   <label for="new_peer_traffic"> حجم (گیگابایت) : <code>(Required)</code></label>
+                                   <input type="number" class="form-control" id="new_peer_traffic" value="{{ peer_traffic }}"  dir="ltr" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                               </div>
+                           </div>
                             <div class="col-sm-6 non-bulk">
                                 <div class="form-group">
                                     <label for="allowed_ips"><code>(Required)</code> : Allowed IPs </label>
@@ -221,11 +234,13 @@
                                             <button type="button" class="btn btn-primary" id="search_available_ip" data-toggle="tooltip" data-placement="top" title="جستجو آیپی های فعال">
                                                 <i class="bi bi-search"></i>
                                             </button>
-                                        </div>
+                                        </div> 
                                     </div>
                                     <p style="position: absolute; top: 4px; right: 1rem;" class="text-success" id="allowed_ips_indicator"></p>
                                 </div>
                             </div>
+                            
+                           
                             <div class="col-sm-6">
                                  <div class="form-group">
                                     <label for="new_add_DNS"><code>(Required)</code>: DNS </label>
@@ -325,6 +340,19 @@
                               <input type="text" class="form-control" id="peer_name_textbox" placeholder="" dir="ltr">
                             </div>
                         </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="peer_date_input"> زمان اشتراک : <code>(Required)</code></label>
+                                <input type="text" class="form-control peer_date_input" name="peer_date_input" id="peer_date_input" value="{{ peer_date }}" autocomplete="off" placeholder="زمان اشتراک" required readonly style="background:#fff;"  dir="rtl">
+                                <div style="width: 0;height: 0; overflow: hidden;"><input type="text" class="form-control peer_date" value="{{ peer_date }}" name="peer_date" id="peer_date" dir="ltr"></div>
+                            </div> 
+                       </div>
+                       <div class="col-sm-6">
+                            <div class="form-group">
+                               <label for="new_peer_traffic"> حجم (گیگابایت) : <code>(Required)</code></label>
+                               <input type="number" class="form-control" id="new_peer_traffic" value="{{ peer_traffic }}"  dir="ltr" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                           </div>
+                       </div>
                         <div class="col-sm-6">
                             <div class="mb-3">
                               <label for="peer_allowed_ip_textbox" class="form-label">Allowed IPs <code>(Required)</code></label>
@@ -448,6 +476,9 @@
 {% include "footer.html" %}
 <script src="{{ url_for('static',filename='js/wireguard.min.js') }}"></script>
 <script src="{{ url_for('static',filename='js/configuration.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/persian-datepicker.css') }}"/>
+<script src="{{ url_for('static',filename='js/persian-date.js') }}"></script>
+<script src="{{ url_for('static',filename='js/persian-datepicker.js') }}"></script>
 <script>
     /* global peers */
     let load_timeout;
@@ -458,5 +489,35 @@
 	$(function(){
 		configurations.loadPeers($('#search_peer_textbox').val());
 	});
+
+
+    $(document).ready(function(){  
+        $('.peer_date_input').persianDatepicker({
+            initialValue: false,
+            format: 'LLLL',
+            altField: '.peer_date',
+            altFormat: 'lll',
+            autoClose: true,
+            "timePicker": {
+                    "enabled": true,
+                    "step": 1,
+                    "hour": {
+                    "enabled": true,
+                    "step": null
+                    },
+                    "minute": {
+                    "enabled": true,
+                    "step": null
+                    },
+                    "second": {
+                    "enabled": false,
+                    "step": null
+                    },
+                    "meridian": {
+                    "enabled": true
+                    }
+                }//
+        });//
+    });//
 </script>
 </html>	
